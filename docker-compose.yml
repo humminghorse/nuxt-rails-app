@@ -1,0 +1,30 @@
+version: '2'
+services:
+  db:
+    image: mysql:5.7.23
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: nuxt-rails-app
+    volumes:
+      - ./db/mysql/volumes:/var/lib/mysql
+  web:
+    build: .
+    ports:
+      - 3000:3000
+    command: bundle exec rails s -p 3000 -b '0.0.0.0'
+    volumes:
+      - .:/app
+    links:
+      - db
+    env_file:
+      - .env
+    tty: true
+    stdin_open: true
+  frontend:
+    build: ./frontend
+    tty: true
+    ports:
+      - 8000:3000
+    command: yarn dev
+    volumes:
+      - .:/app
